@@ -1,4 +1,4 @@
-##r 🔭 opentelemetry-ecosystem-explorer/golang-instrumentation-watcher 🔭
+## 🔭 opentelemetry-ecosystem-explorer/golang-instrumentation-watcher 🔭
 SHELL := /bin/bash
 MAKEFLAGS += --silent
 
@@ -26,6 +26,11 @@ fmt: ## ✨ Format code
 .PHONY: tidy
 tidy: ## 📚 Tidy modules
 	go mod tidy
+
+.PHONY: lint
+lint: ## 🔍 Vet and check formatting
+	go vet ./...
+	test -z "$$(gofmt -l .)" || { echo "unformatted files:"; gofmt -l .; exit 1; }
 
 .PHONY: docs
 docs: ## 📖 Serve godocs @ http://localhost:6060/github.com/open-telemetry/opentelemetry-ecosystem-explorer/golang-instrumentation-watcher

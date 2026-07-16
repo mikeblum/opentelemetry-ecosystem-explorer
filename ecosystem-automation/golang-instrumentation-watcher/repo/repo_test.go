@@ -20,6 +20,13 @@ func setupGitRepo(t *testing.T, tmpDir string, cmds [][]string) {
 	for _, cmd := range cmds {
 		c := exec.Command(cmd[0], cmd[1:]...)
 		c.Dir = tmpDir
+		// Isolate from the developer's global/system git config so commits don't
+		// inherit settings like commit.gpgsign (SSH/GPG signing), which would make
+		// `git commit` fail or block on a key in these hermetic tests.
+		c.Env = append(os.Environ(),
+			"GIT_CONFIG_GLOBAL=/dev/null",
+			"GIT_CONFIG_SYSTEM=/dev/null",
+		)
 		if err := c.Run(); err != nil {
 			t.Fatalf("failed to run %v: %v", cmd, err)
 		}

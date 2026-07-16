@@ -73,16 +73,15 @@ func (t *InstallType) UnmarshalYAML(value *yaml.Node) error {
 }
 
 // Stability is the maturity level of an instrumentation library. Its YAML
-// tokens are "development", "experimental", and "stable".
+// tokens are "experimental" and "stable".
 type Stability int
 
 const (
-	StabilityDevelopment  Stability = iota // early-stage; API may change
-	StabilityExperimental                  // feature-complete but not yet production-ready
+	StabilityExperimental Stability = iota // feature-complete but not yet production-ready
 	StabilityStable                        // stable API, production-ready
 )
 
-var stabilityStrings = [...]string{"development", "experimental", "stable"}
+var stabilityStrings = [...]string{"experimental", "stable"}
 
 // String returns the YAML token for the [Stability].
 func (s Stability) String() string { return stabilityStrings[s] }
@@ -108,7 +107,7 @@ func (s *Stability) UnmarshalYAML(value *yaml.Node) error {
 type Metadata struct {
 	Name                string          `yaml:"name"`
 	DisplayName         string          `yaml:"display_name"`
-	Description         string          `yaml:"description"`
+	Description         string          `yaml:"description,omitempty"`
 	SourcePath          string          `yaml:"source_path"`
 	Scope               Scope           `yaml:"scope"`
 	Module              Module          `yaml:"module"`
@@ -138,7 +137,7 @@ type Module struct {
 // records the [InstallType].
 type Installation struct {
 	Type        InstallType `yaml:"type"`
-	Description string      `yaml:"description"`
+	Description string      `yaml:"description,omitempty"`
 	Example     string      `yaml:"example,omitempty"`
 }
 

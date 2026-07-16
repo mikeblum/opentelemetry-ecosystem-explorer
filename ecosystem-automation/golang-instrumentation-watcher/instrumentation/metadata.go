@@ -18,13 +18,6 @@ var bridgeTargetMap = map[string]string{
 	"otellogrus": "github.com/sirupsen/logrus",
 }
 
-var bridgeDisplayNames = map[string]string{
-	"slog":   "slog",
-	"logr":   "logr",
-	"zap":    "zap",
-	"logrus": "logrus",
-}
-
 // ContribRequire is the identity of a go-contrib module: its module path,
 // version, and declared Go version. It is the per-module source of truth that
 // [DeriveMetadata] turns into a library's descriptive metadata.
@@ -134,11 +127,5 @@ func inferDisplayName(name string) string {
 	if d, ok := displayNameMap[stripped]; ok {
 		return d
 	}
-	if d, ok := bridgeDisplayNames[stripped]; ok {
-		return d
-	}
-	if d, ok := displayNameMap[name]; ok {
-		return d
-	}
-	return name
+	return stripped
 }

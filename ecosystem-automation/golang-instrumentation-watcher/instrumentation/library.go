@@ -11,7 +11,6 @@ import (
 	"slices"
 
 	"github.com/open-telemetry/opentelemetry-ecosystem-explorer/golang-instrumentation-watcher/metadata"
-	"github.com/open-telemetry/opentelemetry-ecosystem-explorer/golang-instrumentation-watcher/repo"
 )
 
 // Library is the fused per-instrumentation record: [metadata.Metadata] derived
@@ -28,36 +27,31 @@ type ScanResult struct {
 	Libraries []Library // instrumentation libraries discovered in the scan
 }
 
-// ScanRepo walks the upstream repository rooted at repoPath and returns the
-// fused [Library] records discovered within it. repoName selects the scan
-// layout: [repo.RepoGo] scans the whole tree, while go-contrib repositories
-// scan only the instrumentation and bridges subtrees. The returned libraries
-// are sorted by name for a byte-stable inventory.
-func ScanRepo(repoName, repoPath string) (*ScanResult, error) {
-	var scanPaths []string
-	switch repoName {
-	case repo.RepoGo:
-		scanPaths = []string{repoPath}
-	default:
-		// Only the subtrees that instrument a developer's code: instrumentation
-		// wrappers (gin, grpc, http…) and bridges (zap, logrus…). The other
-		// go-contrib components (exporters, propagators, samplers, detectors,
-		// processors) configure the SDK pipeline rather than instrument a target
-		// library, so they have no target_module and are out of scope here.
-		for _, sub := range []string{"instrumentation", "bridges"} {
-			scanPaths = append(scanPaths, filepath.Join(repoPath, sub))
-		}
-	}
-
+// ScanRepo walks the go-contrib repository rooted at repoPath and returns the
+// fused [Library] records discovered within it. It scans only the subtrees that
+// instrument a developer's code: instrumentation wrappers (gin, grpc, http…)
+// and bridges (zap, logrus…). The other go-contrib components (exporters,
+// propagators, samplers, detectors, processors) configure the SDK pipeline
+// rather than instrument a target library, so they have no target_module and
+// are out of scope here.
+//
+// A scan error is returned rather than swallowed: a missing subtree or an
+// unreadable go.mod would otherwise produce a smaller inventory that commits as
+// a spurious "libraries removed" diff. The returned libraries are sorted by name
+// for a byte-stable inventory.
+func ScanRepo(repoPath string) (*ScanResult, error) {
 	var libraries []Library
-	for _, scanPath := range scanPaths {
-		packages, err := Walk(scanPath)
+	for _, sub := range []string{"instrumentation", "bridges"} {
+		packages, err := Walk(filepath.Join(repoPath, sub))
 		if err != nil {
-			continue
+			return nil, err
 		}
 		for _, pkg := range packages {
 			lib, err := analyzeLibrary(pkg.GoModPath)
-			if err != nil || lib == nil {
+			if err != nil {
+				return nil, err
+			}
+			if lib == nil {
 				continue
 			}
 			libraries = append(libraries, *lib)

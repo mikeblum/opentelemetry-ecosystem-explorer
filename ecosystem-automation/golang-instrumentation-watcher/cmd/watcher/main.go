@@ -106,7 +106,7 @@ func syncVersion(log *conf.Log, baseDir string, mgr *inventory.Manager, ref, ver
 		return err
 	}
 
-	result, err := instrumentation.ScanRepo(repoInfo.Name, repoInfo.Path)
+	result, err := instrumentation.ScanRepo(repoInfo.Path)
 	if err != nil {
 		return err
 	}

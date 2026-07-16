@@ -6,13 +6,8 @@ import (
 	"strconv"
 )
 
-const (
-	// ENV_LOG_LEVEL is the environment variable that overrides the log level.
-	ENV_LOG_LEVEL = "LOG_LEVEL"
-
-	// LOG_LEVEL_INFO is the default log level used when [ENV_LOG_LEVEL] is unset.
-	LOG_LEVEL_INFO = "info"
-)
+// ENV_LOG_LEVEL is the environment variable that overrides the log level.
+const ENV_LOG_LEVEL = "LOG_LEVEL"
 
 // Log is a [slog.Logger] extended with error-context helpers.
 type Log struct {

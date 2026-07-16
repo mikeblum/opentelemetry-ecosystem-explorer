@@ -16,12 +16,10 @@ import (
 )
 
 const (
-	cwd       = ".repo"
-	perms     = 0755
-	shaLength = 8
+	cwd   = ".repo"
+	perms = 0755
 
-	// RepoGo and RepoContrib are the upstream repository names.
-	RepoGo      = "opentelemetry-go"
+	// RepoContrib is the upstream opentelemetry-go-contrib repository name.
 	RepoContrib = "opentelemetry-go-contrib"
 )
 
@@ -114,7 +112,7 @@ func info(path string) (*RepoInfo, error) {
 
 	return &RepoInfo{
 		Head:    head,
-		SHA:     sha[:shaLength],
+		SHA:     sha,
 		Message: strings.ReplaceAll(msg, "\n", " "),
 	}, nil
 }
