@@ -57,4 +57,3 @@ func omitDirectory(name string) bool {
 	}
 	return false
 }
-

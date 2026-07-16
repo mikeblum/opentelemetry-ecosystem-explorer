@@ -126,7 +126,6 @@ func TestClone(t *testing.T) {
 	}
 }
 
-
 func TestLatestReleaseTag(t *testing.T) {
 	tests := []struct {
 		name string
@@ -139,10 +138,10 @@ func TestLatestReleaseTag(t *testing.T) {
 				"v1.42.0",
 				"v1.44.0",
 				"v1.43.0",
-				"v1.45.0-rc.1",                              // prerelease, ignored
+				"v1.45.0-rc.1", // prerelease, ignored
 				"instrumentation/net/http/otelhttp/v0.69.0", // per-module, ignored
-				"zpages/v0.69.0",                            // per-module, ignored
-				"not-a-tag",                                 // invalid, ignored
+				"zpages/v0.69.0", // per-module, ignored
+				"not-a-tag",      // invalid, ignored
 			},
 			want: "v1.44.0",
 		},
