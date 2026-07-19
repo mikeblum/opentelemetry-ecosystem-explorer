@@ -44,6 +44,7 @@ test-integration: ## 🌐 Run integration tests (clones upstream repos)
 
 .PHONY: pre-commit
 pre-commit: fmt tidy lint test ## ✅ Run all checks
+	bun run format
 
 # pass through CLI flags to ./cmd/
 %:
