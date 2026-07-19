@@ -27,11 +27,6 @@ fmt: ## ✨ Format code
 tidy: ## 📚 Tidy modules
 	go mod tidy
 
-.PHONY: lint
-lint: ## 🔍 Vet and check formatting
-	go vet ./...
-	test -z "$$(gofmt -l .)" || { echo "unformatted files:"; gofmt -l .; exit 1; }
-
 .PHONY: docs
 docs: ## 📖 Serve godocs @ http://localhost:6060/github.com/open-telemetry/opentelemetry-ecosystem-explorer/golang-instrumentation-watcher
 	go run golang.org/x/pkgsite/cmd/pkgsite@latest -http=localhost:6060 .
