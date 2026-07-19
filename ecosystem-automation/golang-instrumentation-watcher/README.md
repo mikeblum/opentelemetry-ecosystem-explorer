@@ -22,8 +22,8 @@ make pre-commit        # fmt, tidy, lint, test
 ```
 
 Optional flags: `-base-dir` (where upstream repos are cloned, the `.repo/` working dir; defaults to
-the cwd) and `-inventory-dir` (defaults to `<repo-root>/ecosystem-registry/go/contrib`). Cloning uses
-HTTPS over the public repo, so no SSH key or token is needed.
+the cwd) and `-inventory-dir` (defaults to `<repo-root>/ecosystem-registry/go/contrib`). Cloning
+uses HTTPS over the public repo, so no SSH key or token is needed.
 
 ## What it produces
 
@@ -86,9 +86,9 @@ path heuristics (`instrumentation_type`, `target_module`, `display_name`).
 
 ## Things to know
 
-- **Dual versioning.** The directory uses go-contrib's bare repo-wide tag (`v1.44.0`); each library's
-  `module.version` comes from its own per-module tag at that commit (`v0.x`). The two lines are
-  independent.
+- **Dual versioning.** The directory uses go-contrib's bare repo-wide tag (`v1.44.0`); each
+  library's `module.version` comes from its own per-module tag at that commit (`v0.x`). The two
+  lines are independent.
 - **Metadata is derived, not authored.** Fields come from each module's own directives plus path
   heuristics; prose fields are omitted when empty.
 - **Output is deterministic.** Records are sorted by stable keys and no timestamps are written, so
