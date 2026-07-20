@@ -7,6 +7,7 @@ import (
 
 	"github.com/open-telemetry/opentelemetry-ecosystem-explorer/golang-instrumentation-watcher/metadata"
 	"golang.org/x/mod/modfile"
+	"golang.org/x/mod/semver"
 )
 
 const otelContribPrefix = "go.opentelemetry.io/contrib/"
@@ -27,8 +28,7 @@ type ContribRequire struct {
 	GoVersion string
 }
 
-// IsOTelContribRequire reports whether path is a go.opentelemetry.io/contrib
-// module path.
+// IsOTelContribRequire reports whether path is a go.opentelemetry.io/contrib module path.
 func IsOTelContribRequire(path string) bool {
 	return strings.HasPrefix(path, otelContribPrefix)
 }
@@ -81,7 +81,7 @@ func DeriveMetadata(r ContribRequire) *metadata.Metadata {
 		LibraryLink:         "https://pkg.go.dev/" + r.Path,
 		InstrumentationType: instrType,
 		Installation:        metadata.Installation{Type: inferInstallType(instrType)},
-		Stability:           metadata.StabilityExperimental,
+		Stability:           inferStability(r.Version),
 	}
 }
 
@@ -106,6 +106,21 @@ func inferInstallType(t metadata.InstrType) metadata.InstallType {
 		return metadata.InstallTypeWrapper
 	}
 	return metadata.InstallTypeImport
+}
+
+func inferStability(version string) metadata.Stability {
+	major := semver.Major(version)
+	switch major {
+	case "v1":
+		// >= v1 is considered stable
+		return metadata.StabilityStable
+	case "v0":
+		// < v1 is considered experimental
+		return metadata.StabilityExperimental
+	default:
+		// default to experimental for unversioned modules
+		return metadata.StabilityExperimental
+	}
 }
 
 func inferTarget(path, name string) string {

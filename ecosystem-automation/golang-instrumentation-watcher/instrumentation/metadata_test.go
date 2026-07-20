@@ -27,43 +27,54 @@ func TestIsOTelContribRequire(t *testing.T) {
 
 func TestDeriveMetadata(t *testing.T) {
 	cases := []struct {
-		req         ContribRequire
-		wantName    string
-		wantType    metadata.InstrType
-		wantInstall metadata.InstallType
-		wantTarget  string
-		wantSource  string
-		wantLibLink string
+		req           ContribRequire
+		wantName      string
+		wantType      metadata.InstrType
+		wantInstall   metadata.InstallType
+		wantTarget    string
+		wantSource    string
+		wantLibLink   string
+		wantStability metadata.Stability
 	}{
 		{
-			req:         ContribRequire{Path: "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp", Version: "v0.68.0", GoVersion: "1.21"},
-			wantName:    "instrumentation-net-http-otelhttp",
-			wantType:    metadata.InstrTypeWrapper,
-			wantInstall: metadata.InstallTypeWrapper,
-			wantTarget:  "net/http",
-			wantSource:  "instrumentation/net/http/otelhttp",
-			wantLibLink: "https://pkg.go.dev/go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp",
+			req:           ContribRequire{Path: "go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp", Version: "v0.68.0", GoVersion: "1.21"},
+			wantName:      "instrumentation-net-http-otelhttp",
+			wantType:      metadata.InstrTypeWrapper,
+			wantInstall:   metadata.InstallTypeWrapper,
+			wantTarget:    "net/http",
+			wantSource:    "instrumentation/net/http/otelhttp",
+			wantLibLink:   "https://pkg.go.dev/go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp",
+			wantStability: metadata.StabilityExperimental,
 		},
 		{
-			req:         ContribRequire{Path: "go.opentelemetry.io/contrib/bridges/otelslog", Version: "v0.9.0", GoVersion: "1.21"},
-			wantName:    "bridges-otelslog",
-			wantType:    metadata.InstrTypeBridge,
-			wantInstall: metadata.InstallTypeImport,
-			wantTarget:  "log/slog",
-			wantSource:  "bridges/otelslog",
-			wantLibLink: "https://pkg.go.dev/go.opentelemetry.io/contrib/bridges/otelslog",
+			req:           ContribRequire{Path: "go.opentelemetry.io/contrib/bridges/otelslog", Version: "v0.9.0", GoVersion: "1.21"},
+			wantName:      "bridges-otelslog",
+			wantType:      metadata.InstrTypeBridge,
+			wantInstall:   metadata.InstallTypeImport,
+			wantTarget:    "log/slog",
+			wantSource:    "bridges/otelslog",
+			wantLibLink:   "https://pkg.go.dev/go.opentelemetry.io/contrib/bridges/otelslog",
+			wantStability: metadata.StabilityExperimental,
 		},
 		{
-			req:         ContribRequire{Path: "go.opentelemetry.io/contrib/exporters/autoexport", Version: "v0.1.0"},
-			wantName:    "exporters-autoexport",
-			wantType:    metadata.InstrTypeExporter,
-			wantInstall: metadata.InstallTypeImport,
+			req:           ContribRequire{Path: "go.opentelemetry.io/contrib/exporters/autoexport", Version: "v0.1.0"},
+			wantName:      "exporters-autoexport",
+			wantType:      metadata.InstrTypeExporter,
+			wantInstall:   metadata.InstallTypeImport,
+			wantStability: metadata.StabilityExperimental,
+		},
+		{
+			req:           ContribRequire{Path: "go.opentelemetry.io/contrib", Version: "v1.44.0"},
+			wantName:      "go.opentelemetry.io-contrib",
+			wantStability: metadata.StabilityStable,
 		},
 		// Uniqueness: both mongo modules share the leaf "otelmongo" but derive
 		// distinct Names from their full source paths.
 		{
 			req:      ContribRequire{Path: "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/mongo/otelmongo"},
 			wantName: "instrumentation-go.mongodb.org-mongo-driver-mongo-otelmongo",
+			// no version defaults to experimental
+			wantStability: metadata.StabilityExperimental,
 		},
 		{
 			req:      ContribRequire{Path: "go.opentelemetry.io/contrib/instrumentation/go.mongodb.org/mongo-driver/v2/mongo/otelmongo"},
